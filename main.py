@@ -12,7 +12,7 @@ class Server:
         print('[MINECRAFT] starting')
         os.chdir('..')
         os.chdir('fabric')
-        Server.p = Popen("java -Xms4G -Xmx16G -jar fabric-server-launch.jar nogui".split(' '), stdout=PIPE,
+        Server.p = Popen("java -Xms1G -Xmx2G -jar fabric-server-launch.jar nogui".split(' '), stdout=PIPE,
                          stdin=PIPE, stderr=PIPE)
         commands.Homes.init()
         while True:
@@ -43,36 +43,33 @@ class Server:
             print('ERROR: cant decode...')
 
     def handle(line):
-        try:
-            if '<' in line and '>' in line:  # message
-                person = line.split('<')[1].split('>')[0]
+        if '<' in line and '>' in line:  # message
+            person = line.split('<')[1].split('>')[0]
 
-                if '!' in line:  # command
-                    print(line)
-                    line = line.strip('\r\n')
-                    command = ''.join(line.split('> !')[1:])
-                    command_name = command.split(' ')[0]
-                    run = True
-                    function = getattr(commands, command_name)
-                    response = function(person, command.split(' '))
-            if 'joined' in line:
-                person = line.split(']: ')[1].split(' ')[0]
-                with open('user_info.json', 'r') as f:
-                    data = json.load(f)
-                if person not in data:
-                    data.update({person: {}})
-                with open('user_info.json', 'w') as f:
-                    json.dump(data, f)
-            # elif 'Triggered' in line:
-            #    print('trigger')
-            #    person = line.split('[')[3].split(':')[0]
-            #    trigger = line.split('[')[4].split(']]')[0]
-            #    print(trigger)
-            #    if 'accept' in trigger:
-            #        print('accept')
-            #        commands.accept(person, trigger)
-        except Exception as e:
-            print('[INTERNAL SERVER ERROR] '+str(e))
+            if '!' in line:  # command
+                print(line)
+                line = line.strip('\r\n')
+                command = ''.join(line.split('> !')[1:])
+                command_name = command.split(' ')[0]
+                run = True
+                function = getattr(commands, command_name)
+                response = function(person, command.split(' '))
+        if 'joined' in line:
+            person = line.split(']: ')[1].split(' ')[0]
+            with open('user_info.json', 'r') as f:
+                data = json.load(f)
+            if person not in data:
+                data.update({person: {}})
+            with open('user_info.json', 'w') as f:
+                json.dump(data, f)
+        # elif 'Triggered' in line:
+        #    print('trigger')
+        #    person = line.split('[')[3].split(':')[0]
+        #    trigger = line.split('[')[4].split(']]')[0]
+        #    print(trigger)
+        #    if 'accept' in trigger:
+        #        print('accept')
+        #        commands.accept(person, trigger)
 
     def get_position(username):
         Server.send(f'execute at {username} run spawnpoint {username} ~ ~ ~')
