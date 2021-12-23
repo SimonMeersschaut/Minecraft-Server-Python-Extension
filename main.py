@@ -101,6 +101,6 @@ def command_line():
 t1 = threading.Thread(target=command_line)
 t1.start()
 
-commands.init(Server)
+commands.init(Server, Settings)
 
 Server.start()
