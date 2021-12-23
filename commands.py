@@ -20,10 +20,9 @@ class Homes:
             json.dump(dictionary, f)
 
 
-def init(server_obj, settings_obj):
+def init(server_obj):
     global server
     server = server_obj
-    settings = settings_obj
 
 
 requests = {}
@@ -94,6 +93,5 @@ def home(sender, args):
 
 
 def bot(sender, args):
-    if args[2] in settings.data["bot_commands"]:
-        server.send(f'execute at {sender} run player {args[1]} {args[2]}')
-        server.send(f'player {args[1]} {args[2]}')
+    server.send(f'execute at {sender} run player {args[1]} {args[2]}')
+    #server.send(f'player {args[1]} {args[2]}')
