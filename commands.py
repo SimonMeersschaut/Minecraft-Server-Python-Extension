@@ -20,9 +20,10 @@ class Homes:
             json.dump(dictionary, f)
 
 
-def init(server_obj):
+def init(server_obj, settings_obj):
     global server
     server = server_obj
+    settings = settings_obj
 
 
 requests = {}
@@ -74,13 +75,10 @@ def accept(accepter, args):
 def home(sender, args):
 
     homes = Homes.read()
-    print(homes)
     if args[1] == 'set':
         x, y, z = server.get_position(sender)
         homes[sender].update({args[2]: [x, y, z]})
-        print('lijn2')
         Homes.write(homes)
-        print('einde')
         server.send('/tellraw '+sender+' {"text":"Home set", "color":"green"}')
     else:
         try:
@@ -93,3 +91,9 @@ def home(sender, args):
         #
         # /tellraw @p {"text":"Do You Like Answering Questions?","color":"gold","bold":true,"hoverEvent":{"action":"show_text","contents":[{"text":"Why are you looking here? Look below!","color":"dark_red","bold":true}]}}
         # First answer: /tellraw @p [{"text":"[YES]","color":"green","bold":true,"clickEvent":{"action":"run_command","value":"/tellraw @p [{\"text\":\"Good!\",\"color\":\"green\",\"bold\":true}]"}},{"text":"   "},{"text":"[NO]","color":"red","clickEvent":{"action":"run_command","value":"/tellraw @p [{\"text\":\"Why did you answer this one then???\",\"color\":\"red\",\"bold\":true}]"}}]
+
+
+def bot(sender, args):
+    if args[2] in settings.data["bot_commands"]:
+        server.send(f'execute at {sender} run player {args[1]} {args[2]}')
+        server.send(f'player {args[1]} {args[2]}')

@@ -6,6 +6,11 @@ import time
 import threading
 
 
+class Settings:
+    with open('settings.json', 'r') as f:
+        data = json.load(f)
+
+
 class Server:
 
     def start():
@@ -36,13 +41,11 @@ class Server:
                 input('Exit server...')
                 exit()
 
-
     def readline():
         try:
             return Server.p.stdout.readline().decode("utf-8")
         except UnicodeError:
             print('ERROR: cant decode...')
-
 
     def handle(line):
         try:
@@ -54,6 +57,12 @@ class Server:
                     line = line.strip('\r\n')
                     command = ''.join(line.split('> !')[1:])
                     command_name = command.split(' ')[0]
+                    run = True
+                    try:
+                        run = Settings[command_name]
+                    except KeyError:
+                        print(
+                            f'The command: {command_name} was not found in de json file!')
                     function = getattr(commands, command_name)
                     response = function(person, command.split(' '))
             if 'joined' in line:
