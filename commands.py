@@ -93,5 +93,9 @@ def home(sender, args):
 
 
 def bot(sender, args):
-    server.send(f'execute at {sender} run player {args[1]} {args[2]}')
+    if not(args[1] in Homes.read()):
+        server.send(f'execute at {sender} run player {args[1]} {args[2]}')
+        server.send('gamemode @a s')
+    else:
+        server.send(f'whisper {sender} you can not ')
     #server.send(f'player {args[1]} {args[2]}')

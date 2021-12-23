@@ -43,25 +43,28 @@ class Server:
             print('ERROR: cant decode...')
 
     def handle(line):
-        if '<' in line and '>' in line:  # message
-            person = line.split('<')[1].split('>')[0]
+        try:
+            if '<' in line and '>' in line:  # message
+                person = line.split('<')[1].split('>')[0]
 
-            if '!' in line:  # command
-                print(line)
-                line = line.strip('\r\n')
-                command = ''.join(line.split('> !')[1:])
-                command_name = command.split(' ')[0]
-                run = True
-                function = getattr(commands, command_name)
-                response = function(person, command.split(' '))
-        if 'joined' in line:
-            person = line.split(']: ')[1].split(' ')[0]
-            with open('user_info.json', 'r') as f:
-                data = json.load(f)
-            if person not in data:
-                data.update({person: {}})
-            with open('user_info.json', 'w') as f:
-                json.dump(data, f)
+                if '!' in line:  # command
+                    print(line)
+                    line = line.strip('\r\n')
+                    command = ''.join(line.split('> !')[1:])
+                    command_name = command.split(' ')[0]
+                    run = True
+                    function = getattr(commands, command_name)
+                    response = function(person, command.split(' '))
+            if 'joined' in line:
+                person = line.split(']: ')[1].split(' ')[0]
+                with open('user_info.json', 'r') as f:
+                    data = json.load(f)
+                if person not in data:
+                    data.update({person: {}})
+                with open('user_info.json', 'w') as f:
+                    json.dump(data, f)
+        except:
+            pass
         # elif 'Triggered' in line:
         #    print('trigger')
         #    person = line.split('[')[3].split(':')[0]
