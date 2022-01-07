@@ -61,7 +61,7 @@ def accept(accepter, args):
 
     print(requests)
     request = requests[accepter]
-    asker = args[1].split('_')[-1]
+    asker = args[1].split('accept_tp_from_')[-1]
     if asker.lower() == request['asker'].lower():
         if time.time()-request['time'] < 60:
             server.send(request['command'])
