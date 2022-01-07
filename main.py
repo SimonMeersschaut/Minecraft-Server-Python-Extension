@@ -1,11 +1,16 @@
 import json
 from subprocess import *
+from flask import Flask
 import commands
 import os
 import time
 import threading
+import logging
 
 
+api = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 class Server:
 
     def start():
@@ -22,26 +27,25 @@ class Server:
                 time.sleep(1)
             else:
                 Server.handle(line)
-
-    def send(data):
-        if type(data) == list:
-            for i in data:
+    @api.route('/run/<line>')
+    def send(line):
+        if type(line) == list:
+            for i in line:
                 Server.p.stdin.write(bytes(i+'\n', encoding='utf-8'))
                 Server.p.stdin.flush()
         else:
-            Server.p.stdin.write(bytes(data+'\n', encoding='utf-8'))
+            Server.p.stdin.write(bytes(line+'\n', encoding='utf-8'))
             try:
                 Server.p.stdin.flush()
             except OSError:
                 input('Exit server...')
                 exit()
-
+        return True
     def readline():
         try:
             return Server.p.stdout.readline().decode("utf-8")
         except UnicodeError:
             print('ERROR: cant decode...')
-
     def handle(line):
         try:
             if '<' in line and '>' in line:  # message
@@ -87,10 +91,16 @@ def command_line():
     while True:
         Server.send(input(''))
 
+def api_function():
+    api.run(debug=False, use_reloader=False)
 
-t1 = threading.Thread(target=command_line)
-t1.start()
+if __name__ == '__main__':
+    t1 = threading.Thread(target=command_line)
+    t1.start()
+    t2 = threading.Thread(target=api_function)
+    t2.start()
 
-commands.init(Server)
-
-Server.start()
+    commands.init(Server)
+    
+    
+    Server.start()
