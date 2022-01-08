@@ -107,4 +107,4 @@ def regen(sender, args):
     server.send('weather rain')
 
 def storm(sender, args):
-    server.send('weather storm')
+    server.send('weather thunder')

@@ -6,19 +6,28 @@ import os
 import time
 import threading
 import logging
-
+import socket
 
 api = Flask(__name__)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
+
 class Server:
+
+    with open('settings.json', 'r') as f:
+        settings = json.load(f)
+    if not('startup_gb' in list(settings.keys())):
+        settings.update({'startup_gb':8, 'end_gb':16, "hostname":"192.168.0.226"})
+    with open('settings.json', 'w') as f:
+        json.dump(settings, f)
+    
     waiting = False
     line = ''
     def start():
         os.chdir('..')
         os.chdir('fabric')
         print('[MINECRAFT] starting')
-        Server.p = Popen("java -Xms2G -Xmx16G -jar fabric-server-launch.jar nogui".split(' '), stdout=PIPE,
+        Server.p = Popen(f"java -Xms{Server.settings['startup_gb']}G -Xmx{Server.settings['end_gb']}G -jar fabric-server-launch.jar nogui".split(' '), stdout=PIPE,
                          stdin=PIPE, stderr=PIPE)
         commands.Homes.init()
         while True:
@@ -106,7 +115,7 @@ def command_line():
         Server.send(input(''))
 
 def api_function():
-    api.run(debug=False, use_reloader=False)
+    api.run(host=Server.settings['hostname'], debug=False, use_reloader=False)
     
 
 if __name__ == '__main__':

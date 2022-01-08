@@ -1,9 +1,1 @@
-{
-  "tp": true,
-  "home": true,
-  "bot": true,
-  "bot_commands": [
-    "spawn",
-    "kill"
-  ]
-}
+{"tp": true, "home": true, "bot": true, "bot_commands": ["spawn", "kill"]}
