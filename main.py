@@ -12,22 +12,24 @@ api = Flask(__name__)
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
 class Server:
-
+    waiting = False
+    line = ''
     def start():
-        print('[MINECRAFT] starting')
         os.chdir('..')
         os.chdir('fabric')
+        print('[MINECRAFT] starting')
         Server.p = Popen("java -Xms1G -Xmx2G -jar fabric-server-launch.jar nogui".split(' '), stdout=PIPE,
                          stdin=PIPE, stderr=PIPE)
         commands.Homes.init()
         while True:
-            line = Server.readline()
-            print(line, end='')
-            if line == '':
+            Server.line = Server.readline()
+            if not Server.waiting:
+                print(Server.line, end='')
+            if Server.line == '':
                 time.sleep(1)
             else:
-                Server.handle(line)
-    @api.route('/run/<line>')
+                Server.handle(Server.line)
+    
     def send(line):
         if type(line) == list:
             for i in line:
@@ -41,6 +43,18 @@ class Server:
                 input('Exit server...')
                 exit()
         return True
+    
+    @api.route('/run/<line>')
+    def run(line):
+        Server.waiting = True
+        Server.send(line)
+        time.sleep(0.5)
+        line = Server.line
+        # while line == '':
+        #     line = Server.readline()
+        #     print(line)
+        Server.waiting = False
+        return "response: "+line
     def readline():
         try:
             return Server.p.stdout.readline().decode("utf-8")
@@ -93,12 +107,14 @@ def command_line():
 
 def api_function():
     api.run(debug=False, use_reloader=False)
+    
 
 if __name__ == '__main__':
     t1 = threading.Thread(target=command_line)
     t1.start()
     t2 = threading.Thread(target=api_function)
     t2.start()
+    os.system('cls')
 
     commands.init(Server)
     
