@@ -61,7 +61,7 @@ def accept(accepter, args):
 
     print(requests)
     request = requests[accepter]
-    asker = args[1].split('accept_tp_from_')[-1]
+    asker = args[1].split('_')[-1]
     if asker.lower() == request['asker'].lower():
         if time.time()-request['time'] < 60:
             server.send(request['command'])
@@ -93,9 +93,18 @@ def home(sender, args):
 
 
 def bot(sender, args):
-    if not(args[1] in Homes.read()):
-        server.send(f'execute at {sender} run player {args[1]} {args[2]}')
-        server.send('gamemode @a s')
-    else:
-        server.send(f'whisper {sender} you can not ')
-    #server.send(f'player {args[1]} {args[2]}')
+        #temp = f'execute at {sender} run player {args[1]} {args[2]} {args[3]}'
+        #if temp[-1] == ' ':
+        #        temp = temp[:-1]
+        server.send(f'execute at {sender} run player {" ".join(args[1:])}')
+        server.send('gamemode survival @a')
+
+
+def zon(sender, args):
+    server.send('weather clear')
+
+def regen(sender, args):
+    server.send('weather rain')
+
+def storm(sender, args):
+    server.send('weather storm')

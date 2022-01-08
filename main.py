@@ -18,7 +18,7 @@ class Server:
         os.chdir('..')
         os.chdir('fabric')
         print('[MINECRAFT] starting')
-        Server.p = Popen("java -Xms1G -Xmx2G -jar fabric-server-launch.jar nogui".split(' '), stdout=PIPE,
+        Server.p = Popen("java -Xms2G -Xmx16G -jar fabric-server-launch.jar nogui".split(' '), stdout=PIPE,
                          stdin=PIPE, stderr=PIPE)
         commands.Homes.init()
         while True:
